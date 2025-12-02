@@ -1,3 +1,6 @@
+pub mod day1;
+
 fn main() {
-    println!("Hello, world!");
+    day1::run("inputs/day1test.txt");
+    day1::run("inputs/day1");
 }
