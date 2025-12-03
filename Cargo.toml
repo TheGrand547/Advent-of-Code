@@ -7,3 +7,4 @@ edition = "2021"
 opt-level = 3
 
 [dependencies]
+trpl = "0.3.0"
