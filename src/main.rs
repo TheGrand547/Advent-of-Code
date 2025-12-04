@@ -8,5 +8,5 @@ fn main() {
     //day1::run("inputs/day1");
     day3::run("inputs/day3test.txt");
     println!();
-    //day3::run("inputs/day3");
+    day3::run("inputs/day3");
 }

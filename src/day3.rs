@@ -12,6 +12,7 @@ pub fn run(filename: &str) {
             .lines()
         {
             let original: Vec<char> = line.chars().collect();
+            let mut fuckery: Vec<char> = line.chars().collect();
             let mut str_line = line.to_string().clone();
             let mut ordered = original.clone();
             ordered.sort();
@@ -66,21 +67,37 @@ pub fn run(filename: &str) {
                     .map(|x| x.to_string())
                     .collect::<Vec<String>>()
                     .join("");
+                let mut start = 0;
                 for i in (0..12).rev() {
                     let current = ordered.pop().unwrap();
                     let cringe = fuck.pop();
                     let first_i = fuck.find(cringe.unwrap());
                     let index;
-                    if first_i.is_none() || length - first_i.unwrap() < i {
-                        index = str_line.find(current).unwrap();
-                    } else {
-                        index = str_line.rfind(current).unwrap();
+                    /*
+                                        if first_i.is_none() || length - first_i.unwrap() < i {
+                                            index = str_line.find(current).unwrap();
+                                        } else {
+                                            index = str_line.rfind(current).unwrap();
+                                        }
+                    */
+                    let mut largest: char = '0';
+                    let mut large_index = start;
+                    for zoom in start..length - i {
+                        let current = fuckery.get(zoom).unwrap();
+                        if *current > largest {
+                            largest = *current;
+                            large_index = zoom;
+                            //println!("{} > {}: {}", current, largest, large_index);
+                        }
                     }
-
+                    start = large_index;
+                    index = large_index;
                     //let index = str_line.rfind(current).unwrap();
+                    //println!("<{:?}>", fuckery);
                     str_line.replace_range(index..(index + 1), " ");
-                    putter.replace_range(index..(index + 1), current.to_string().as_str());
-                    println!("<{}>", str_line);
+                    putter.replace_range(index..(index + 1), largest.to_string().as_str());
+                    *fuckery.get_mut(index).unwrap() = '0';
+
                     blast[index] = current.to_digit(10).unwrap();
                     //    putter.get_mut(index).unwrap() = current;
                     /*
