@@ -7,4 +7,4 @@ edition = "2021"
 opt-level = 3
 
 [dependencies]
-trpl = "0.3.0"
+primitive-types = "0.14.0"
