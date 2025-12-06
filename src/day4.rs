@@ -95,7 +95,7 @@ pub fn run(filename: &str) {
             }
             big_boys = next_one.to_owned();
         }
-        println!("Total Removes: {}", total);
-        println!("First Removes: {}", first_iteration);
     }
+    println!("Total Removes: {}", total);
+    println!("First Removes: {}", first_iteration);
 }

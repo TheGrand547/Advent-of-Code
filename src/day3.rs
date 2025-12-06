@@ -33,7 +33,6 @@ pub fn run(filename: &str) {
             let out: String = output.chars().filter(|x| !x.is_whitespace()).collect();
             total += out.parse::<u64>().unwrap()
         }
-
-        println!("Total: {}", total);
     }
+    println!("Total: {}", total);
 }
