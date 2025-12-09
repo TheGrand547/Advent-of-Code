@@ -15,26 +15,13 @@ pub fn run(filename: &str) {
         {
             if phase_two_started {
                 let input: i64 = line.parse().unwrap();
-                match ranges.binary_search_by(|x: &(i64, i64)| x.0.cmp(&input)) {
+                match ranges.binary_search(&input) {
                     Ok(_) => total += 1,
-                    Err(position) => {
-                        if position + 1 < ranges.len() {
-                            let current = ranges[position + 1];
-                            if current.0 <= input && input <= current.1 {
-                                total += 1;
-                            }
-                        }
-                        if position < ranges.len() {
-                            let current = ranges[position];
-                            if current.0 <= input && input <= current.1 {
-                                total += 1;
-                            }
-                        }
-                        if position > 0 {
-                            let current = ranges[position - 1];
-                            if current.0 <= input && input <= current.1 {
-                                total += 1;
-                            }
+                    Err(x) => {
+                        // odd index indicates that it's higher than the lower bound
+                        // but less than an upper bound
+                        if x % 2 != 0 {
+                            total += 1;
                         }
                     }
                 }
@@ -46,72 +33,29 @@ pub fn run(filename: &str) {
                 if halves.len() != 2 {
                     continue;
                 }
-                let mut low: i64 = halves[0].parse().unwrap();
-                let mut high: i64 = halves[1].parse().unwrap();
+                let low: i64 = halves[0].parse().unwrap();
+                let high: i64 = halves[1].parse().unwrap();
+
                 if ranges.len() == 0 {
-                    ranges.push((low, high));
+                    ranges.push(low);
+                    ranges.push(high);
                     continue;
                 }
-                //println!("{:?}", ranges);
-                match ranges.binary_search_by(|x| x.0.cmp(&low).then(high.cmp(&x.1))) {
-                    // Could be inserted here, thus is greater than everything before it
-                    Err(posiition) => {
-                        if posiition == 0 {
-                            ranges.insert(posiition, (low, high));
-                            continue;
+                let first = ranges.binary_search(&low);
+                let second = ranges.binary_search(&high);
+                // Both endpoints are not found
+                if first.is_err() && second.is_err() {
+                    let low_pos = first.unwrap_err();
+                    let high_pos = first.unwrap_err();
+                    if low_pos == high_pos {
+                        // Even index means its within a currently existing range
+                        if low_pos % 2 == 0 {
+                            ranges.insert(low_pos, low);
+                            ranges.insert(low_pos + 1, high)
                         }
-                        let mut removes = Vec::with_capacity(2);
-                        let previous = ranges[posiition - 1];
-                        //println!("Cap{}", line);
-                        if previous.1 < low {
-                            ranges.insert(posiition, (low, high));
-                            continue;
-                        }
-                        // Rangse will be combined with the previous
-                        else {
-                            low = previous.0;
-                            removes.push(posiition - 1);
-                        }
-                        //println!("Toe: {}", posiition);
-                        if posiition > ranges.len() {
-                            ranges.insert(posiition, (low, high));
-                            continue;
-                        }
-                        if posiition == ranges.len() {
-                            if removes.len() == 0 {
-                                ranges.push((low, high));
-                            }
-                        } else {
-                            //println!("Sleep");
-                            let next = ranges[posiition];
-                            if next == (low, high)
-                            {
-                                continue;
-                            }
-                            if next.0 > high {
-                                ranges.insert(posiition, (low, high));
-                                continue;
-                            } else {
-                                high = next.1;
-                                removes.push(posiition);
-                            }
-                        }
-                        //println!("!{}", line);
-                        if removes.len() == 1 {
-                            ranges.push((low, high));
-                            ranges.swap_remove(removes[0]);
-                            continue;
-                        } else if removes.len() == 0 {
-                            ranges.insert(posiition, (low, high));
-                        } else {
-                            //println!("Yikes");
-                            // remove both, screm
-                            ranges.push((low, high));
-                            ranges.swap_remove(posiition);
-                            ranges.remove(removes[0]);
-                        }
+                        continue;
+                    } else {
                     }
-                    _ => (),
                 }
             }
         }
